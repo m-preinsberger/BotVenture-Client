@@ -6,17 +6,22 @@ namespace BotVenture
         {
             InitializeComponent();
             LevelComboBox.DataSource = Enum.GetValues(typeof(Level));
+            FilterComboBox.DataSource = Enum.GetValues(typeof(LobbyFilter));
+            LobbiesListbox.DataSource = LobbyList;
+            LobbiesListbox.DisplayMember = "Host";
         }
 
         public string API_KEY { get; internal set; } = string.Empty;
         public string GameId { get; private set; } = string.Empty;
         internal bool APISet { set; get; }
+        private string OwnHostName { get; set; } = "Prometheus";
         public DateTime StartTime { get; set; }
         public DateTime StartAt { get; set; }
         public int TakeLobbiesNum { get; set; } = 20;
-        public bool ShowRunningLobies { get; set; } = false;
+        public LobbyFilter LobbyFilter { get; set; } = LobbyFilter.open;
+        public Lobby[] LobbyList { get; set; } = new Lobby[0];
 
-        public bool DEBUG { get; private set; } = false;
+        public bool DEBUG { get; private set; } = true;
         internal bool GameIDSet { set; get; } = false;
         internal bool GameStarted { get; set; } = false;
         internal bool GameCreated { get; set; } = false;
@@ -29,10 +34,6 @@ namespace BotVenture
             }
         }
         private Level ChoosenLevel { get; set; } = Level.level0;
-        internal enum Level
-        {
-            level0
-        }
 
         private async void commitButton_Click(object sender, EventArgs e)
         {
@@ -104,6 +105,10 @@ namespace BotVenture
                     }
                 }
             }
+            else
+            {
+                MessageBox.Show("API-Key not set", "API-Key missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void LevelComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -132,23 +137,137 @@ namespace BotVenture
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             // TODO load the lobies available
+            await RefreshLobbyList();
         }
 
         private void RunningCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            // asigning the the value to the propertie
-            ShowRunningLobies = RunningCheckBox.Checked;
+            // assigning the value to the property
+            // This Checkbox doesnt exist anymore but im afraid to delete it, because winforms doesnt like it when you delete functions
         }
 
-        private void TakerMoreLobbies_Click(object sender, EventArgs e)
+        private async void TakerMoreLobbies_Click(object sender, EventArgs e)
         {
             // increase the number of lobbies the function should return
             TakeLobbiesNum += 20;
             // Call the refresh function with the new parameters
+            button1_Click(sender, e);
+        }
 
+        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (GameCreated)
+            {
+                var io = new IO(this);
+                await io.CloseGame();
+            }
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+
+            // Fetch the lobbies based on the selected LobbyFilter
+            switch (LobbyFilter)
+            {
+                case LobbyFilter.all:
+                    LobbyList = await io.GetCurrentGames(LobbyFilter.all, TakeLobbiesNum);
+                    break;
+                case LobbyFilter.open:
+                    LobbyList = await io.GetCurrentGames(LobbyFilter.open, TakeLobbiesNum);
+                    break;
+                case LobbyFilter.running:
+                    LobbyList = await io.GetCurrentGames(LobbyFilter.running, TakeLobbiesNum);
+                    break;
+            }
+
+            // Refresh the lobby list in the listbox
+            LobbiesListbox.DataSource = null; // Reset the data source
+            LobbiesListbox.DataSource = LobbyList; // Reassign the updated list
+            LobbiesListbox.DisplayMember = "Host"; // Ensure it displays the 'Host' property
+
+            // Check if there is a lobby with the host name matching OwnHostName
+            bool hasOwnHostName = LobbyList?.Any(lobby => lobby.Host == OwnHostName) ?? false;
+            GameCreated = hasOwnHostName;
+
+            // Update UI elements based on whether the user's game is found
+            if (GameCreated)
+            {
+                LevelComboBox.Enabled = false;
+                CreateButton.Text = "Close Game";
+                StartButton.Enabled = false;
+                GameId = null;
+                CreateButton.Enabled = APISet; // Enable CreateButton only if API is set
+            }
+            else
+            {
+                LevelComboBox.Enabled = true;
+                CreateButton.Text = "Create Game";
+                StartButton.Enabled = true;
+            }
+        }
+
+
+        private async void FilterComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Update the LobbyFilter property based on the selected item in FilterComboBox
+            LobbyFilter = (LobbyFilter)FilterComboBox.SelectedItem;
+
+            // Refresh the lobby list
+            await RefreshLobbyList();
+        }
+        private async Task RefreshLobbyList()
+        {
+            var io = new IO(this);
+
+            switch (LobbyFilter)
+            {
+                case LobbyFilter.all:
+                    LobbyList = await io.GetCurrentGames(LobbyFilter.all, TakeLobbiesNum);
+                    break;
+                case LobbyFilter.open:
+                    LobbyList = await io.GetCurrentGames(LobbyFilter.open, TakeLobbiesNum);
+                    break;
+                case LobbyFilter.running:
+                    LobbyList = await io.GetCurrentGames(LobbyFilter.running, TakeLobbiesNum);
+                    break;
+            }
+
+            // Update the list box to show the filtered lobbies
+            LobbiesListbox.DataSource = null; // Reset the data source
+            LobbiesListbox.DataSource = LobbyList; // Reassign the updated list
+            LobbiesListbox.DisplayMember = "Host"; // Ensure it displays the 'Host' property
+
+            // Check if there is a lobby with the host name matching OwnHostName
+            bool hasOwnHostName = LobbyList?.Any(lobby => lobby.Host == OwnHostName) ?? false;
+            GameCreated = hasOwnHostName;
+
+            // Update UI elements based on the presence of the user's lobby
+            if (GameCreated)
+            {
+                LevelComboBox.Enabled = false;
+                CreateButton.Text = "Close Game";
+                StartButton.Enabled = false;
+                GameId = null;
+                if (!APISet) CreateButton.Enabled = false;
+                else CreateButton.Enabled = true;
+            }
+            else
+            {
+                LevelComboBox.Enabled = true;
+                CreateButton.Text = "Create Game";
+                StartButton.Enabled = true;
+            }
+        }
+        private void SaveAPIKey_CheckedChanged(object sender, EventArgs e)
+        {
+            if (APISet)
+            {
+                // lets save the key in a json file in the project 
+            }
         }
     }
 }

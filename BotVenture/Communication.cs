@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BotVenture;
+using static BotVenture.Form1;
 
 namespace BotVenture
 {
@@ -155,9 +158,59 @@ namespace BotVenture
             }
         }
 
-        public async Task GetCurrentGames(bool running, int take)
+        public async Task<Lobby[]> GetCurrentGames(string running, string take)
         {
+            if (string.IsNullOrWhiteSpace(running) || string.IsNullOrWhiteSpace(take))
+            {
+                throw new ArgumentException("Parameters 'running' and 'take' cannot be null or empty.");
+            }
 
+            string requestUrl = $"/api/game/list/{running}/{take}";
+
+            try
+            {
+                HttpResponseMessage response = await Client.GetAsync(requestUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    try
+                    {
+                        var lobbies = JsonSerializer.Deserialize<Lobby[]>(responseContent, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                        return lobbies ?? Array.Empty<Lobby>();
+                    }
+                    catch (JsonException jsonEx)
+                    {
+                        MessageBox.Show($"Error deserializing response: {jsonEx.Message}", "Deserialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return Array.Empty<Lobby>();
+                    }
+                }
+                else
+                {
+                    string errorMessage = _form.DEBUG
+                        ? $"Failed to get current games.\nRequest URL: {requestUrl}\nStatus Code: {response.StatusCode}\nReason: {response.ReasonPhrase}"
+                        : $"Failed to get current games. Status code: {response.StatusCode}";
+
+                    MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return Array.Empty<Lobby>();
+                }
+            }
+            catch (Exception ex)
+            {
+                string exceptionMessage = _form.DEBUG
+                    ? $"An error occurred:\nMessage: {ex.Message}\nStack Trace: {ex.StackTrace}\nRequest URL: {requestUrl}"
+                    : $"An error occurred: {ex.Message}";
+
+                MessageBox.Show(exceptionMessage, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return Array.Empty<Lobby>();
+            }
         }
+
+
     }
 }

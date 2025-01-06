@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace BotVenture
             CheckGameID(gameId);           // Call the join method from the Communication class
             await Communication.JoinGame(_form.API_KEY, gameId);
         }
-        public async Task CreateGame(Form1.Level level)
+        public async Task CreateGame(Level level)
         {
             CheckAPIKey(_form.API_KEY);
             string level_str = level.ToString();
@@ -58,6 +59,21 @@ namespace BotVenture
         {
             CheckAPIKey(_form.API_KEY);
             return await Communication.StartGame(_form.API_KEY);
+        }
+        public async Task<Lobby[]> GetCurrentGames(LobbyFilter lobbyFilter, int maxLobbies)
+        {
+            switch (lobbyFilter)
+            {
+                case LobbyFilter.open:
+                    return await Communication.GetCurrentGames("false", maxLobbies.ToString());
+                    break;
+                case LobbyFilter.running:
+                    return await Communication.GetCurrentGames("true", maxLobbies.ToString());
+                case LobbyFilter.all:
+                    return await Communication.GetCurrentGames("Null", maxLobbies.ToString());
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }
