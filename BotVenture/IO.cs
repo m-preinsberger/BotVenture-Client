@@ -17,6 +17,7 @@ namespace BotVenture
         {
             _form = form ?? throw new ArgumentNullException(nameof(form));
             Communication = new Communication(_form);
+        
         }
         private bool CheckAPIKey(string apiKey)
         {

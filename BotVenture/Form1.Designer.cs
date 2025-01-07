@@ -92,6 +92,7 @@
             LobbiesListbox.Name = "LobbiesListbox";
             LobbiesListbox.Size = new Size(222, 319);
             LobbiesListbox.TabIndex = 4;
+            LobbiesListbox.DoubleClick += LobbiesListbox_DoubleClick;
             // 
             // RefreshLobbies
             // 

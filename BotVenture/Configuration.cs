@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace BotVenture
 {
-    public enum Level
+    public class Configuration
     {
-        level0,
-        level1,
-        level2,
-        level3,
-        level8,
+        public string API_KEY { get; set; }
     }
 }

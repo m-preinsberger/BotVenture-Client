@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text.Json;
 namespace BotVenture
 {
     public partial class Form1 : Form
@@ -12,6 +14,7 @@ namespace BotVenture
         }
 
         public string API_KEY { get; internal set; } = string.Empty;
+        public bool API_ENABLED { get; internal set; }
         public string GameId { get; private set; } = string.Empty;
         internal bool APISet { set; get; }
         private string OwnHostName { get; set; } = "Prometheus";
@@ -21,7 +24,7 @@ namespace BotVenture
         public LobbyFilter LobbyFilter { get; set; } = LobbyFilter.open;
         public Lobby[] LobbyList { get; set; } = new Lobby[0];
 
-        public bool DEBUG { get; private set; } = true;
+        public bool DEBUG { get; private set; } = false;
         internal bool GameIDSet { set; get; } = false;
         internal bool GameStarted { get; set; } = false;
         internal bool GameCreated { get; set; } = false;
@@ -96,12 +99,13 @@ namespace BotVenture
                 {
                     // If the game is not created, create it
                     await io.CreateGame(ChoosenLevel);
+                    
                     if (GameCreated)
                     {
                         LevelComboBox.Enabled = false;
                         CreateButton.Text = "Close Game";
                         StartButton.Enabled = true;
-                        GameId = null;
+                        //GameId = null;
                     }
                 }
             }
@@ -109,6 +113,7 @@ namespace BotVenture
             {
                 MessageBox.Show("API-Key not set", "API-Key missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            await RefreshLobbyList();
         }
 
         private void LevelComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -129,6 +134,7 @@ namespace BotVenture
                     StartAt = DateTime.Parse(result.StartAt);
 
                     MessageBox.Show($"Game started successfully.\nNow: {StartTime}\nStart At: {StartAt}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await RefreshLobbyList();
                 }
                 else
                 {
@@ -140,6 +146,7 @@ namespace BotVenture
         private async void Form1_Load(object sender, EventArgs e)
         {
             // TODO load the lobies available
+            await LoadAPIKey();
             await RefreshLobbyList();
         }
 
@@ -159,11 +166,8 @@ namespace BotVenture
 
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (GameCreated)
-            {
-                var io = new IO(this);
-                await io.CloseGame();
-            }
+            var io = new IO(this);
+            await io.CloseGame();
         }
 
         private async void button1_Click(object sender, EventArgs e)
@@ -245,28 +249,119 @@ namespace BotVenture
             bool hasOwnHostName = LobbyList?.Any(lobby => lobby.Host == OwnHostName) ?? false;
             GameCreated = hasOwnHostName;
 
+            // Check if the game with your own hostname has already started
+            bool hasOwnHostNameStarted = LobbyList?.Any(lobby => lobby.Host == OwnHostName && lobby.IsRunning) ?? false;
+            GameStarted = hasOwnHostNameStarted;
+
             // Update UI elements based on the presence of the user's lobby
             if (GameCreated)
             {
                 LevelComboBox.Enabled = false;
                 CreateButton.Text = "Close Game";
                 StartButton.Enabled = false;
+                GameIdTextBox.Enabled = false;
                 GameId = null;
                 if (!APISet) CreateButton.Enabled = false;
+                if (!GameStarted) StartButton.Enabled = true;
                 else CreateButton.Enabled = true;
             }
             else
             {
                 LevelComboBox.Enabled = true;
                 CreateButton.Text = "Create Game";
-                StartButton.Enabled = true;
+                StartButton.Enabled = false;
+                GameIdTextBox.Enabled = true;
             }
         }
         private void SaveAPIKey_CheckedChanged(object sender, EventArgs e)
         {
-            if (APISet)
+            if (SaveAPIKey.Checked)
             {
-                // lets save the key in a json file in the project 
+                if (APISet)
+                {
+                    // Create an instance of the configuration class
+                    var config = new Configuration
+                    {
+                        API_KEY = API_KEY
+                    };
+
+                    // Serialize the configuration to JSON
+                    string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+
+                    // Write the JSON to a file
+                    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+                    File.WriteAllText(filePath, json);
+
+                    if(DEBUG) MessageBox.Show("API key saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                // Disable the textbox
+                apikeyTextBox.Enabled = false;
+            }
+            else
+            {
+                // Enable the textbox
+                apikeyTextBox.Enabled = true;
+            }
+        }
+
+        private async Task LoadAPIKey()
+        {
+            // Check if theres a theres a json file existing and when it is deserialze it and save it in the APIKey variable
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    // Read the JSON file
+                    string json = File.ReadAllText(filePath);
+                    // Now lets deserialize the data and save it in a new instance of config
+                    var config = JsonSerializer.Deserialize<Configuration>(json);
+                    if (config != null)
+                    {
+                        API_KEY = config.API_KEY;
+                        APISet = true;
+                        apikeyTextBox.Text = config.API_KEY;
+                        apikeyTextBox.Enabled = false;
+                        SaveAPIKey.Checked = true;
+                        if(DEBUG) MessageBox.Show("API key loaded successfully.", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to load API key: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No saved API-key found.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void LobbiesListbox_DoubleClick(object sender, EventArgs e)
+        {
+            // when a item in the listbox is double clicked, a messagebox with all the according informations should pop up
+            if(LobbiesListbox.SelectedIndex != null && LobbiesListbox.Items.Count != 0)
+            {
+                try
+                {
+                    Lobby item = (Lobby)LobbiesListbox.Items[LobbiesListbox.SelectedIndex];
+                    MessageBox.Show(
+                        $"Host:       {item.Host}\n" +
+                        $"Level:      {item.Level}\n" +
+                        $"Description:\n{item.Description}\n\n" +
+                        $"GameID:     {item.GameID}\n" +
+                        $"Started At: {item.StartedAt:yyyy-MM-dd HH:mm:ss}\n" +
+                        $"Is Running: {item.IsRunning}",
+                        "Game Details",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while casting the LobbiesListBox Items to the Lobby class", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }
