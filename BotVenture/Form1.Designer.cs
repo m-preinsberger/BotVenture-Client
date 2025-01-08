@@ -1,6 +1,6 @@
 ﻿namespace BotVenture
 {
-    partial class Form1
+    partial class BotVentureForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BotVentureForm));
             apikeyTextBox = new TextBox();
             apikeyLabel = new Label();
             JoinButton = new Button();
@@ -45,10 +45,16 @@
             FilterComboBox = new ComboBox();
             SaveAPIKey = new CheckBox();
             DisplayGameStats = new Button();
+            TakeControlButton = new RoundButton();
+            ButtonMoveUp = new Button();
+            ButtonMoveDown = new Button();
+            ButtonMoveRight = new Button();
+            ButtonMoveLeft = new Button();
             SuspendLayout();
             // 
             // apikeyTextBox
             // 
+            apikeyTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             apikeyTextBox.Location = new Point(12, 27);
             apikeyTextBox.Name = "apikeyTextBox";
             apikeyTextBox.Size = new Size(154, 23);
@@ -58,6 +64,7 @@
             // 
             // apikeyLabel
             // 
+            apikeyLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             apikeyLabel.AutoSize = true;
             apikeyLabel.Location = new Point(12, 9);
             apikeyLabel.Name = "apikeyLabel";
@@ -67,6 +74,7 @@
             // 
             // JoinButton
             // 
+            JoinButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             JoinButton.Enabled = false;
             JoinButton.Location = new Point(398, 25);
             JoinButton.Name = "JoinButton";
@@ -79,6 +87,7 @@
             // 
             // GameIdTextBox
             // 
+            GameIdTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GameIdTextBox.Location = new Point(278, 27);
             GameIdTextBox.Name = "GameIdTextBox";
             GameIdTextBox.Size = new Size(114, 23);
@@ -88,6 +97,7 @@
             // 
             // LobbiesListbox
             // 
+            LobbiesListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LobbiesListbox.FormattingEnabled = true;
             LobbiesListbox.ItemHeight = 15;
             LobbiesListbox.Location = new Point(566, 41);
@@ -98,6 +108,7 @@
             // 
             // RefreshLobbies
             // 
+            RefreshLobbies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             RefreshLobbies.Location = new Point(727, 12);
             RefreshLobbies.Name = "RefreshLobbies";
             RefreshLobbies.Size = new Size(61, 23);
@@ -108,6 +119,7 @@
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Location = new Point(566, 16);
             label1.Name = "label1";
@@ -117,6 +129,7 @@
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Location = new Point(278, 9);
             label2.Name = "label2";
@@ -126,6 +139,7 @@
             // 
             // GameIDLabel
             // 
+            GameIDLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GameIDLabel.AutoSize = true;
             GameIDLabel.Location = new Point(368, 9);
             GameIDLabel.Name = "GameIDLabel";
@@ -134,6 +148,7 @@
             // 
             // CreateButton
             // 
+            CreateButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             CreateButton.Location = new Point(12, 85);
             CreateButton.Name = "CreateButton";
             CreateButton.Size = new Size(154, 23);
@@ -144,6 +159,7 @@
             // 
             // LevelComboBox
             // 
+            LevelComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LevelComboBox.FormattingEnabled = true;
             LevelComboBox.Location = new Point(12, 56);
             LevelComboBox.Name = "LevelComboBox";
@@ -153,6 +169,7 @@
             // 
             // StartButton
             // 
+            StartButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             StartButton.Enabled = false;
             StartButton.Location = new Point(12, 114);
             StartButton.Name = "StartButton";
@@ -164,6 +181,7 @@
             // 
             // TakerMoreLobbies
             // 
+            TakerMoreLobbies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             TakerMoreLobbies.Location = new Point(566, 366);
             TakerMoreLobbies.Name = "TakerMoreLobbies";
             TakerMoreLobbies.Size = new Size(222, 23);
@@ -174,6 +192,7 @@
             // 
             // FilterComboBox
             // 
+            FilterComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             FilterComboBox.FormattingEnabled = true;
             FilterComboBox.Location = new Point(636, 13);
             FilterComboBox.Name = "FilterComboBox";
@@ -183,6 +202,7 @@
             // 
             // SaveAPIKey
             // 
+            SaveAPIKey.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             SaveAPIKey.AutoSize = true;
             SaveAPIKey.Location = new Point(172, 29);
             SaveAPIKey.Name = "SaveAPIKey";
@@ -194,6 +214,7 @@
             // 
             // DisplayGameStats
             // 
+            DisplayGameStats.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DisplayGameStats.Enabled = false;
             DisplayGameStats.Location = new Point(566, 395);
             DisplayGameStats.Name = "DisplayGameStats";
@@ -203,11 +224,75 @@
             DisplayGameStats.UseVisualStyleBackColor = true;
             DisplayGameStats.Click += DisplayGameStats_Click;
             // 
-            // Form1
+            // TakeControlButton
+            // 
+            TakeControlButton.Enabled = false;
+            TakeControlButton.Location = new Point(307, 190);
+            TakeControlButton.Name = "TakeControlButton";
+            TakeControlButton.Size = new Size(75, 75);
+            TakeControlButton.TabIndex = 17;
+            TakeControlButton.Text = "Take Control";
+            TakeControlButton.UseVisualStyleBackColor = true;
+            TakeControlButton.Click += TakeControlButton_Click;
+            // 
+            // ButtonMoveUp
+            // 
+            ButtonMoveUp.Enabled = false;
+            ButtonMoveUp.Location = new Point(307, 161);
+            ButtonMoveUp.Name = "ButtonMoveUp";
+            ButtonMoveUp.Size = new Size(75, 23);
+            ButtonMoveUp.TabIndex = 18;
+            ButtonMoveUp.Text = "Up";
+            ButtonMoveUp.UseVisualStyleBackColor = true;
+            ButtonMoveUp.Visible = false;
+            ButtonMoveUp.Click += ButtonMoveUp_Click;
+            // 
+            // ButtonMoveDown
+            // 
+            ButtonMoveDown.Enabled = false;
+            ButtonMoveDown.Location = new Point(307, 271);
+            ButtonMoveDown.Name = "ButtonMoveDown";
+            ButtonMoveDown.Size = new Size(75, 23);
+            ButtonMoveDown.TabIndex = 19;
+            ButtonMoveDown.Text = "Down";
+            ButtonMoveDown.UseVisualStyleBackColor = true;
+            ButtonMoveDown.Visible = false;
+            ButtonMoveDown.Click += ButtonMoveDown_Click;
+            // 
+            // ButtonMoveRight
+            // 
+            ButtonMoveRight.Enabled = false;
+            ButtonMoveRight.Location = new Point(388, 216);
+            ButtonMoveRight.Name = "ButtonMoveRight";
+            ButtonMoveRight.Size = new Size(75, 23);
+            ButtonMoveRight.TabIndex = 20;
+            ButtonMoveRight.Text = "Right";
+            ButtonMoveRight.UseVisualStyleBackColor = true;
+            ButtonMoveRight.Visible = false;
+            ButtonMoveRight.Click += ButtonMoveRight_Click;
+            // 
+            // ButtonMoveLeft
+            // 
+            ButtonMoveLeft.Enabled = false;
+            ButtonMoveLeft.Location = new Point(226, 216);
+            ButtonMoveLeft.Name = "ButtonMoveLeft";
+            ButtonMoveLeft.Size = new Size(75, 23);
+            ButtonMoveLeft.TabIndex = 21;
+            ButtonMoveLeft.Text = "Left";
+            ButtonMoveLeft.UseVisualStyleBackColor = true;
+            ButtonMoveLeft.Visible = false;
+            ButtonMoveLeft.Click += ButtonMoveLeft_Click;
+            // 
+            // BotVentureForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(ButtonMoveLeft);
+            Controls.Add(ButtonMoveRight);
+            Controls.Add(ButtonMoveDown);
+            Controls.Add(ButtonMoveUp);
+            Controls.Add(TakeControlButton);
             Controls.Add(DisplayGameStats);
             Controls.Add(SaveAPIKey);
             Controls.Add(FilterComboBox);
@@ -225,10 +310,11 @@
             Controls.Add(apikeyLabel);
             Controls.Add(apikeyTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "Form1";
+            Name = "BotVentureForm";
             Text = "BotVenture";
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
+            KeyDown += Form1_KeyDown;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -251,5 +337,10 @@
         private ComboBox FilterComboBox;
         private CheckBox SaveAPIKey;
         private Button DisplayGameStats;
+        private RoundButton TakeControlButton;
+        private Button ButtonMoveUp;
+        private Button ButtonMoveDown;
+        private Button ButtonMoveRight;
+        private Button ButtonMoveLeft;
     }
 }

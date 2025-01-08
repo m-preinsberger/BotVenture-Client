@@ -10,15 +10,16 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BotVenture;
-using static BotVenture.Form1;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static BotVenture.BotVentureForm;
 
 namespace BotVenture
 {
     internal class Communication
     {
-        private readonly Form1 _form;
+        private readonly BotVentureForm _form;
 
-        public Communication(Form1 form)
+        public Communication(BotVentureForm form)
         {
             _form = form;
         }
@@ -244,6 +245,47 @@ namespace BotVenture
                 return Array.Empty<Lobby>();
             }
         }
+
+        public async Task<MoveResponse> PlayerMoveDirection(string ApiKey, int Direction)
+        {
+            // Create the URL by appending the API key and direction to the base URL
+            string requestUrl = $"/api/Player/{ApiKey}/move/{Direction}";
+
+            try
+            {
+                HttpResponseMessage response = await Client.PostAsync(requestUrl, null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    try
+                    {
+                        var moveResponse = JsonSerializer.Deserialize<MoveResponse>(responseContent, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                        if(_form.DEBUG) MessageBox.Show($"Successfully moved player in direction: {Direction}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return moveResponse;
+                    }
+                    catch (JsonException jsonEx)
+                    {
+                        MessageBox.Show($"Error deserializing response: {jsonEx.Message}", "Deserialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return null;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Failed to move player. Status code: {response.StatusCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
 
 
     }

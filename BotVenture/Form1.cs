@@ -1,10 +1,11 @@
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 namespace BotVenture
 {
-    public partial class Form1 : Form
+    public partial class BotVentureForm : Form
     {
-        public Form1()
+        public BotVentureForm()
         {
             InitializeComponent();
             LevelComboBox.DataSource = Enum.GetValues(typeof(Level));
@@ -17,6 +18,7 @@ namespace BotVenture
         public bool API_ENABLED { get; internal set; }
         public string GameId { get; private set; } = string.Empty;
         internal bool APISet { set; get; }
+        internal bool ManualControlMode { get; set; } = false;
         private string OwnHostName { get; set; } = "Prometheus";
         public DateTime StartTime { get; set; }
         public DateTime StartAt { get; set; }
@@ -57,6 +59,7 @@ namespace BotVenture
             GameIdTextBox.Enabled = false;
             CreateButton.Enabled = false;
             DisplayGameStats.Enabled = true;
+            TakeControlButton.Enabled = true;
             // There is no funcrtion to enable it agian because the server hasnt the function to leave so the user should jsut restart the game after the host closed the lobby
         }
 
@@ -276,6 +279,7 @@ namespace BotVenture
                 StartButton.Enabled = false;
                 GameIdTextBox.Enabled = false;
                 GameId = null;
+                TakeControlButton.Enabled = true;
                 if (!APISet) CreateButton.Enabled = false;
                 if (!GameStarted) StartButton.Enabled = true;
                 else CreateButton.Enabled = true;
@@ -286,7 +290,16 @@ namespace BotVenture
                 CreateButton.Text = "Create Game";
                 StartButton.Enabled = false;
                 GameIdTextBox.Enabled = true;
+                TakeControlButton.Enabled = false;
                 DisplayGameStats.Enabled = false;
+                ButtonMoveUp.Visible = false;
+                ButtonMoveUp.Enabled = false;
+                ButtonMoveRight.Visible = false;
+                ButtonMoveRight.Enabled = false;
+                ButtonMoveDown.Visible = false;
+                ButtonMoveDown.Enabled = false;
+                ButtonMoveLeft.Visible = false;
+                ButtonMoveLeft.Enabled = false;
             }
         }
         private void SaveAPIKey_CheckedChanged(object sender, EventArgs e)
@@ -411,6 +424,62 @@ namespace BotVenture
                     MessageBox.Show("Failed to retrieve game state.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private async void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+
+        private void TakeControlButton_Click(object sender, EventArgs e)
+        {
+            ManualControlMode = !ManualControlMode;
+            if (ManualControlMode)
+            {
+                ButtonMoveUp.Visible = true;
+                ButtonMoveUp.Enabled = true;
+                ButtonMoveRight.Visible = true;
+                ButtonMoveRight.Enabled = true;
+                ButtonMoveDown.Visible = true;
+                ButtonMoveDown.Enabled = true;
+                ButtonMoveLeft.Visible = true;
+                ButtonMoveLeft.Enabled = true;
+            }
+            else
+            {
+                ButtonMoveUp.Visible = false;
+                ButtonMoveUp.Enabled = false;
+                ButtonMoveRight.Visible = false;
+                ButtonMoveRight.Enabled = false;
+                ButtonMoveDown.Visible = false;
+                ButtonMoveDown.Enabled = false;
+                ButtonMoveLeft.Visible = false;
+                ButtonMoveLeft.Enabled = false;
+            }
+        }
+
+        private void ButtonMoveUp_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            io.PlayerMove(Direction.Up);
+        }
+        private void ButtonMoveRight_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            io.PlayerMove(Direction.Right);
+        }
+
+        private void ButtonMoveDown_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            io.PlayerMove(Direction.Down);
+        }
+
+        private void ButtonMoveLeft_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            io.PlayerMove(Direction.Left);
         }
     }
 }

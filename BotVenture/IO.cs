@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using BotVenture;
@@ -11,9 +12,9 @@ namespace BotVenture
     internal class IO
     {
         private Communication Communication;
-        private Form1 _form;
+        private BotVentureForm _form;
 
-        public IO(Form1 form)
+        public IO(BotVentureForm form)
         {
             _form = form ?? throw new ArgumentNullException(nameof(form));
             Communication = new Communication(_form);
@@ -80,6 +81,28 @@ namespace BotVenture
         {
             CheckAPIKey (_form.API_KEY);
             return await Communication.GetCurrentGameState(_form.API_KEY);
+        }
+        public async Task<MoveResponse> PlayerMove(Direction direction)
+        {
+            CheckAPIKey (_form.API_KEY);
+            switch (direction)
+            {
+                case Direction.Up:
+                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
+                    break;
+                case Direction.Right:
+                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
+                    break;
+                case Direction.Down:
+                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
+                    break;
+                case Direction.Left:
+                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
+                    break;
+                default:
+                    throw new ArgumentNullException("The Direction Enum has an invalid value.");
+                    break;
+            }
         }
     }
 }
