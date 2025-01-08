@@ -157,15 +157,49 @@ namespace BotVenture
                 return (null, null);
             }
         }
+        public async Task<GameState> GetCurrentGameState(string ApiKey)
+        {
+            if (string.IsNullOrEmpty(ApiKey)) throw new ArgumentNullException("API-Key cannot be null.");
+            string requestUrl = $"/api/game/{ApiKey}/state";
+            try
+            {
+                HttpResponseMessage response = await Client.GetAsync(requestUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    try
+                    {
+                        var GameState = JsonSerializer.Deserialize<GameState>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        return GameState;
+                    }
+                    catch (JsonException jsonEx)
+                    {
+                        MessageBox.Show($"Error deserializing response: {jsonEx.Message}", "Deserialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return null;
+                    }
+                }
+                else
+                {
+                    string errorMessage = _form.DEBUG ? $"Failed to get current game state. \nRequest URL: {requestUrl}\nStatus Code: {response.StatusCode}\nReason: {response.ReasonPhrase}"
+                        : $"Failed to get current game state.\n{response.StatusCode}";
+                    MessageBox.Show(errorMessage, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                string exceptionMessage = _form.DEBUG
+                ? $"An error occurred:\nMessage: {ex.Message}\nStack Trace: {ex.StackTrace}\nRequest URL: {requestUrl}"
+                : $"An error occurred: {ex.Message}";
 
+                MessageBox.Show(exceptionMessage, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
         public async Task<Lobby[]> GetCurrentGames(string running, string take)
         {
-            if (string.IsNullOrWhiteSpace(running) || string.IsNullOrWhiteSpace(take))
-            {
-                throw new ArgumentException("Parameters 'running' and 'take' cannot be null or empty.");
-            }
-
             string requestUrl = $"/api/game/list/{running}/{take}";
+            if (running == "null") requestUrl = $"/api/game/list/";
 
             try
             {

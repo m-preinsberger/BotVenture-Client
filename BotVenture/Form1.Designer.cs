@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             apikeyTextBox = new TextBox();
             apikeyLabel = new Label();
             JoinButton = new Button();
@@ -43,6 +44,7 @@
             TakerMoreLobbies = new Button();
             FilterComboBox = new ComboBox();
             SaveAPIKey = new CheckBox();
+            DisplayGameStats = new Button();
             SuspendLayout();
             // 
             // apikeyTextBox
@@ -66,7 +68,7 @@
             // JoinButton
             // 
             JoinButton.Enabled = false;
-            JoinButton.Location = new Point(398, 29);
+            JoinButton.Location = new Point(398, 25);
             JoinButton.Name = "JoinButton";
             JoinButton.Size = new Size(75, 23);
             JoinButton.TabIndex = 2;
@@ -125,7 +127,7 @@
             // GameIDLabel
             // 
             GameIDLabel.AutoSize = true;
-            GameIDLabel.Location = new Point(310, 9);
+            GameIDLabel.Location = new Point(368, 9);
             GameIDLabel.Name = "GameIDLabel";
             GameIDLabel.Size = new Size(0, 15);
             GameIDLabel.TabIndex = 8;
@@ -190,11 +192,23 @@
             SaveAPIKey.UseVisualStyleBackColor = true;
             SaveAPIKey.CheckedChanged += SaveAPIKey_CheckedChanged;
             // 
+            // DisplayGameStats
+            // 
+            DisplayGameStats.Enabled = false;
+            DisplayGameStats.Location = new Point(566, 395);
+            DisplayGameStats.Name = "DisplayGameStats";
+            DisplayGameStats.Size = new Size(222, 23);
+            DisplayGameStats.TabIndex = 16;
+            DisplayGameStats.Text = "Show game stats";
+            DisplayGameStats.UseVisualStyleBackColor = true;
+            DisplayGameStats.Click += DisplayGameStats_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(DisplayGameStats);
             Controls.Add(SaveAPIKey);
             Controls.Add(FilterComboBox);
             Controls.Add(TakerMoreLobbies);
@@ -210,6 +224,7 @@
             Controls.Add(JoinButton);
             Controls.Add(apikeyLabel);
             Controls.Add(apikeyTextBox);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "BotVenture";
             FormClosing += Form1_FormClosing;
@@ -235,5 +250,6 @@
         private Button TakerMoreLobbies;
         private ComboBox FilterComboBox;
         private CheckBox SaveAPIKey;
+        private Button DisplayGameStats;
     }
 }

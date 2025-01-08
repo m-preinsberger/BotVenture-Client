@@ -71,10 +71,15 @@ namespace BotVenture
                 case LobbyFilter.running:
                     return await Communication.GetCurrentGames("true", maxLobbies.ToString());
                 case LobbyFilter.all:
-                    return await Communication.GetCurrentGames("Null", maxLobbies.ToString());
+                    return await Communication.GetCurrentGames("null", maxLobbies.ToString());
                 default:
                     throw new NotImplementedException();
             }
+        }
+        public async Task<GameState> GetCurrentGameState()
+        {
+            CheckAPIKey (_form.API_KEY);
+            return await Communication.GetCurrentGameState(_form.API_KEY);
         }
     }
 }

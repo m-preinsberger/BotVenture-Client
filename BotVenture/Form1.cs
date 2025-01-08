@@ -21,11 +21,13 @@ namespace BotVenture
         public DateTime StartTime { get; set; }
         public DateTime StartAt { get; set; }
         public int TakeLobbiesNum { get; set; } = 20;
-        public LobbyFilter LobbyFilter { get; set; } = LobbyFilter.open;
+        public LobbyFilter LobbyFilter { get; set; } = LobbyFilter.all;
         public Lobby[] LobbyList { get; set; } = new Lobby[0];
+        public GameState GameState { get; set; }
 
         public bool DEBUG { get; private set; } = false;
         internal bool GameIDSet { set; get; } = false;
+        internal bool GameJoined { set; get; } = false;
         internal bool GameStarted { get; set; } = false;
         internal bool GameCreated { get; set; } = false;
         public void SetGameID(string newID)
@@ -40,12 +42,22 @@ namespace BotVenture
 
         private async void commitButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(API_KEY) && !string.IsNullOrEmpty(GameId))
+            if (GameIDSet && APISet)
             {
                 // Create an instance of IO and call JoinGame
                 var io = new IO(this);
                 await io.JoinGame(GameId);
+                GameJoinedEvent();
             }
+        }
+        private void GameJoinedEvent()
+        {
+            GameJoined = true;
+            JoinButton.Enabled = false;
+            GameIdTextBox.Enabled = false;
+            CreateButton.Enabled = false;
+            DisplayGameStats.Enabled = true;
+            // There is no funcrtion to enable it agian because the server hasnt the function to leave so the user should jsut restart the game after the host closed the lobby
         }
 
         private void GameIdTextBox_TextChanged(object sender, EventArgs e)
@@ -57,6 +69,7 @@ namespace BotVenture
             }
             else
             {
+                GameId = GameIdTextBox.Text;
                 GameIDSet = true;
                 JoinButton.Enabled = true;
             }
@@ -99,7 +112,7 @@ namespace BotVenture
                 {
                     // If the game is not created, create it
                     await io.CreateGame(ChoosenLevel);
-                    
+
                     if (GameCreated)
                     {
                         LevelComboBox.Enabled = false;
@@ -135,6 +148,7 @@ namespace BotVenture
 
                     MessageBox.Show($"Game started successfully.\nNow: {StartTime}\nStart At: {StartAt}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     await RefreshLobbyList();
+                    GameStarted = true;
                 }
                 else
                 {
@@ -161,7 +175,7 @@ namespace BotVenture
             // increase the number of lobbies the function should return
             TakeLobbiesNum += 20;
             // Call the refresh function with the new parameters
-            button1_Click(sender, e);
+            RefreshLobbyList();
         }
 
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -256,6 +270,7 @@ namespace BotVenture
             // Update UI elements based on the presence of the user's lobby
             if (GameCreated)
             {
+                DisplayGameStats.Enabled = true;
                 LevelComboBox.Enabled = false;
                 CreateButton.Text = "Close Game";
                 StartButton.Enabled = false;
@@ -271,6 +286,7 @@ namespace BotVenture
                 CreateButton.Text = "Create Game";
                 StartButton.Enabled = false;
                 GameIdTextBox.Enabled = true;
+                DisplayGameStats.Enabled = false;
             }
         }
         private void SaveAPIKey_CheckedChanged(object sender, EventArgs e)
@@ -292,7 +308,7 @@ namespace BotVenture
                     string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
                     File.WriteAllText(filePath, json);
 
-                    if(DEBUG) MessageBox.Show("API key saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (DEBUG) MessageBox.Show("API key saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 // Disable the textbox
@@ -324,7 +340,7 @@ namespace BotVenture
                         apikeyTextBox.Text = config.API_KEY;
                         apikeyTextBox.Enabled = false;
                         SaveAPIKey.Checked = true;
-                        if(DEBUG) MessageBox.Show("API key loaded successfully.", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (DEBUG) MessageBox.Show("API key loaded successfully.", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 catch (Exception ex)
@@ -341,7 +357,7 @@ namespace BotVenture
         private void LobbiesListbox_DoubleClick(object sender, EventArgs e)
         {
             // when a item in the listbox is double clicked, a messagebox with all the according informations should pop up
-            if(LobbiesListbox.SelectedIndex != null && LobbiesListbox.Items.Count != 0)
+            if (LobbiesListbox.SelectedIndex != null && LobbiesListbox.Items.Count != 0)
             {
                 try
                 {
@@ -361,6 +377,38 @@ namespace BotVenture
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error while casting the LobbiesListBox Items to the Lobby class", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private async void DisplayGameStats_Click(object sender, EventArgs e)
+        {
+            if (GameJoined || GameCreated)
+            {
+                var io = new IO(this);
+
+                GameState = await io.GetCurrentGameState();
+
+                if (GameState != null)
+                {
+                    MessageBox.Show(
+                        $"Is Running: {GameState.isRunning}\n" +
+                        $"Start At: {GameState.startAt:yyyy-MM-dd HH:mm:ss}\n" +
+                        $"Width: {GameState.width}\n" +
+                        $"Height: {GameState.height}\n" +
+                        $"Player Y: {GameState.playerY}\n" +
+                        $"Player X: {GameState.playerX}\n" +
+                        $"View Radius: {GameState.viewRadius}\n" +
+                        $"Goal Position Y: {GameState.goalPositionY}\n" +
+                        $"Goal Position X: {GameState.goalPositionX}",
+                        "Game State Details",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                else
+                {
+                    MessageBox.Show("Failed to retrieve game state.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
