@@ -18,6 +18,7 @@ namespace BotVenture
         public bool API_ENABLED { get; internal set; }
         public string GameId { get; private set; } = string.Empty;
         internal bool APISet { set; get; }
+        private MoveResponse? moveResponse { get; set; }
         internal bool ManualControlMode { get; set; } = false;
         private string OwnHostName { get; set; } = "Prometheus";
         public DateTime StartTime { get; set; }
@@ -300,6 +301,7 @@ namespace BotVenture
                 ButtonMoveDown.Enabled = false;
                 ButtonMoveLeft.Visible = false;
                 ButtonMoveLeft.Enabled = false;
+                GameResponseDisplayLabel.Visible = false;
             }
         }
         private void SaveAPIKey_CheckedChanged(object sender, EventArgs e)
@@ -445,6 +447,7 @@ namespace BotVenture
                 ButtonMoveDown.Enabled = true;
                 ButtonMoveLeft.Visible = true;
                 ButtonMoveLeft.Enabled = true;
+                GameResponseDisplayLabel.Visible = true;
             }
             else
             {
@@ -456,30 +459,56 @@ namespace BotVenture
                 ButtonMoveDown.Enabled = false;
                 ButtonMoveLeft.Visible = false;
                 ButtonMoveLeft.Enabled = false;
+                GameResponseDisplayLabel.Visible = false;
             }
         }
 
-        private void ButtonMoveUp_Click(object sender, EventArgs e)
+        private async void ButtonMoveUp_Click(object sender, EventArgs e)
         {
             var io = new IO(this);
-            io.PlayerMove(Direction.Up);
+            moveResponse = await io.PlayerMove(Direction.Up);
+            DisplayMoveResponse();
         }
-        private void ButtonMoveRight_Click(object sender, EventArgs e)
+        private async void ButtonMoveRight_Click(object sender, EventArgs e)
         {
             var io = new IO(this);
-            io.PlayerMove(Direction.Right);
-        }
-
-        private void ButtonMoveDown_Click(object sender, EventArgs e)
-        {
-            var io = new IO(this);
-            io.PlayerMove(Direction.Down);
+            moveResponse = await io.PlayerMove(Direction.Right);
+            DisplayMoveResponse();
         }
 
-        private void ButtonMoveLeft_Click(object sender, EventArgs e)
+        private async void ButtonMoveDown_Click(object sender, EventArgs e)
         {
             var io = new IO(this);
-            io.PlayerMove(Direction.Left);
+            moveResponse = await io.PlayerMove(Direction.Down);
+            DisplayMoveResponse();
+        }
+
+        private async void ButtonMoveLeft_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            moveResponse = await io.PlayerMove(Direction.Left);
+            DisplayMoveResponse();
+        }
+
+        private void DisplayMoveResponse()
+        {
+            if (moveResponse != null)
+            {
+                GameResponseDisplayLabel.Text = $"Game-over: {moveResponse.GameOver}\nScore: {moveResponse.Score}\nSuccess: {moveResponse.Success}\nNew Position: {moveResponse.NewPosition}";
+            }
+            else
+            {
+                GameResponseDisplayLabel.Text = "No move response available.";
+            }
+        }
+
+        private void LobbiesListbox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // the text should be the gameID of the selected lobby
+            if (LobbiesListbox.SelectedItem is Lobby selectedLobby)
+            {
+                GameIdTextBox.Text = selectedLobby.GameID;
+            }
         }
     }
 }

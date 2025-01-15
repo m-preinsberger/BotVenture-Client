@@ -50,6 +50,8 @@
             ButtonMoveDown = new Button();
             ButtonMoveRight = new Button();
             ButtonMoveLeft = new Button();
+            GameResponseLabel = new Label();
+            GameResponseDisplayLabel = new Label();
             SuspendLayout();
             // 
             // apikeyTextBox
@@ -104,6 +106,7 @@
             LobbiesListbox.Name = "LobbiesListbox";
             LobbiesListbox.Size = new Size(222, 319);
             LobbiesListbox.TabIndex = 4;
+            LobbiesListbox.SelectedIndexChanged += LobbiesListbox_SelectedIndexChanged;
             LobbiesListbox.DoubleClick += LobbiesListbox_DoubleClick;
             // 
             // RefreshLobbies
@@ -283,11 +286,30 @@
             ButtonMoveLeft.Visible = false;
             ButtonMoveLeft.Click += ButtonMoveLeft_Click;
             // 
+            // GameResponseLabel
+            // 
+            GameResponseLabel.AutoSize = true;
+            GameResponseLabel.Location = new Point(12, 161);
+            GameResponseLabel.Name = "GameResponseLabel";
+            GameResponseLabel.Size = new Size(94, 15);
+            GameResponseLabel.TabIndex = 22;
+            GameResponseLabel.Text = "Game Response:";
+            // 
+            // GameResponseDisplayLabel
+            // 
+            GameResponseDisplayLabel.AutoSize = true;
+            GameResponseDisplayLabel.Location = new Point(12, 190);
+            GameResponseDisplayLabel.Name = "GameResponseDisplayLabel";
+            GameResponseDisplayLabel.Size = new Size(0, 15);
+            GameResponseDisplayLabel.TabIndex = 23;
+            // 
             // BotVentureForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(GameResponseDisplayLabel);
+            Controls.Add(GameResponseLabel);
             Controls.Add(ButtonMoveLeft);
             Controls.Add(ButtonMoveRight);
             Controls.Add(ButtonMoveDown);
@@ -342,5 +364,7 @@
         private Button ButtonMoveDown;
         private Button ButtonMoveRight;
         private Button ButtonMoveLeft;
+        private Label GameResponseLabel;
+        private Label GameResponseDisplayLabel;
     }
 }
