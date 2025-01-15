@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace BotVenture
 {
-    public class MoveResponse : PicKUpResponse
+    public class PicKUpResponse
     {
-        public Position NewPosition { get; set; }
+        public bool GameOver {  get; set; }
+        public int Score { get; set; }
+        public bool Success { get; set; }
     }
 }

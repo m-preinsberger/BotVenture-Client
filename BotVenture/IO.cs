@@ -82,6 +82,11 @@ namespace BotVenture
             CheckAPIKey (_form.API_KEY);
             return await Communication.GetCurrentGameState(_form.API_KEY);
         }
+        public async Task<PicKUpResponse> PlayerPickUp()
+        {
+            CheckAPIKey (_form.API_KEY);
+            return await Communication.PlayerPickUp(_form.API_KEY);
+        }
         public async Task<MoveResponse> PlayerMove(Direction direction)
         {
             CheckAPIKey (_form.API_KEY);

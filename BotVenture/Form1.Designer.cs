@@ -52,6 +52,8 @@
             ButtonMoveLeft = new Button();
             GameResponseLabel = new Label();
             GameResponseDisplayLabel = new Label();
+            ButtonPlayerPickUp = new Button();
+            ButtonPlayerLook = new Button();
             SuspendLayout();
             // 
             // apikeyTextBox
@@ -303,11 +305,35 @@
             GameResponseDisplayLabel.Size = new Size(0, 15);
             GameResponseDisplayLabel.TabIndex = 23;
             // 
+            // ButtonPlayerPickUp
+            // 
+            ButtonPlayerPickUp.Location = new Point(343, 337);
+            ButtonPlayerPickUp.Name = "ButtonPlayerPickUp";
+            ButtonPlayerPickUp.Size = new Size(120, 23);
+            ButtonPlayerPickUp.TabIndex = 24;
+            ButtonPlayerPickUp.Text = "Pick Up";
+            ButtonPlayerPickUp.UseVisualStyleBackColor = true;
+            ButtonPlayerPickUp.Visible = false;
+            ButtonPlayerPickUp.Click += ButtonPlayerPickUp_Click;
+            // 
+            // ButtonPlayerLook
+            // 
+            ButtonPlayerLook.Location = new Point(226, 337);
+            ButtonPlayerLook.Name = "ButtonPlayerLook";
+            ButtonPlayerLook.Size = new Size(120, 23);
+            ButtonPlayerLook.TabIndex = 25;
+            ButtonPlayerLook.Text = "Look";
+            ButtonPlayerLook.UseVisualStyleBackColor = true;
+            ButtonPlayerLook.Visible = false;
+            ButtonPlayerLook.Click += ButtonPlayerLook_Click;
+            // 
             // BotVentureForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(ButtonPlayerLook);
+            Controls.Add(ButtonPlayerPickUp);
             Controls.Add(GameResponseDisplayLabel);
             Controls.Add(GameResponseLabel);
             Controls.Add(ButtonMoveLeft);
@@ -366,5 +392,7 @@
         private Button ButtonMoveLeft;
         private Label GameResponseLabel;
         private Label GameResponseDisplayLabel;
+        private Button ButtonPlayerPickUp;
+        private Button ButtonPlayerLook;
     }
 }

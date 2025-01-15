@@ -299,6 +299,8 @@ namespace BotVenture
                 ButtonMoveRight.Enabled = false;
                 ButtonMoveDown.Visible = false;
                 ButtonMoveDown.Enabled = false;
+                ButtonPlayerPickUp.Visible = false;
+                ButtonPlayerLook.Visible = false;
                 ButtonMoveLeft.Visible = false;
                 ButtonMoveLeft.Enabled = false;
                 GameResponseDisplayLabel.Visible = false;
@@ -445,6 +447,8 @@ namespace BotVenture
                 ButtonMoveRight.Enabled = true;
                 ButtonMoveDown.Visible = true;
                 ButtonMoveDown.Enabled = true;
+                ButtonPlayerPickUp.Visible = true;
+                ButtonPlayerLook.Visible = true;
                 ButtonMoveLeft.Visible = true;
                 ButtonMoveLeft.Enabled = true;
                 GameResponseDisplayLabel.Visible = true;
@@ -456,6 +460,8 @@ namespace BotVenture
                 ButtonMoveRight.Visible = false;
                 ButtonMoveRight.Enabled = false;
                 ButtonMoveDown.Visible = false;
+                ButtonPlayerLook.Visible = false;
+                ButtonPlayerPickUp.Visible = false;
                 ButtonMoveDown.Enabled = false;
                 ButtonMoveLeft.Visible = false;
                 ButtonMoveLeft.Enabled = false;
@@ -509,6 +515,27 @@ namespace BotVenture
             {
                 GameIdTextBox.Text = selectedLobby.GameID;
             }
+        }
+
+        private async void ButtonPlayerPickUp_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            PicKUpResponse response = await io.PlayerPickUp();
+
+            if (moveResponse == null)
+            {
+                moveResponse = new MoveResponse(); // Ensure moveResponse is initialized
+            }
+
+            moveResponse.GameOver = response.GameOver;
+            moveResponse.Score = response.Score;
+            moveResponse.Success = response.Success;
+            DisplayMoveResponse();
+        }
+
+        private void ButtonPlayerLook_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

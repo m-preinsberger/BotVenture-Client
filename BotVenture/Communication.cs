@@ -286,7 +286,39 @@ namespace BotVenture
             }
         }
 
+        public async Task<PicKUpResponse> PlayerPickUp(string ApiKey)
+        {
+            string requestUrl = $"/api/Player/{ApiKey}/pickup";
+            try
+            {
+                HttpResponseMessage response = await Client.PostAsync(requestUrl, null);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    try
+                    {
+                        var pickUpResponse = JsonSerializer.Deserialize<PicKUpResponse>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        return pickUpResponse;
+                    }
+                    catch (JsonException jsonEX)
+                    {
+                        MessageBox.Show($"Error deserializing response: {jsonEX.Message}", "Deserialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return null;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Failed to pickup. Status code: {response.StatusCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
 
-
+        //public async Task<>
     }
 }
