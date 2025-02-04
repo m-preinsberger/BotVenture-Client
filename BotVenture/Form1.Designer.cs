@@ -54,6 +54,9 @@
             GameResponseDisplayLabel = new Label();
             ButtonPlayerPickUp = new Button();
             ButtonPlayerLook = new Button();
+            MapPanel = new Panel();
+            LookGridTableLayoutPanel = new TableLayoutPanel();
+            MapPanel.SuspendLayout();
             SuspendLayout();
             // 
             // apikeyTextBox
@@ -106,7 +109,7 @@
             LobbiesListbox.ItemHeight = 15;
             LobbiesListbox.Location = new Point(566, 41);
             LobbiesListbox.Name = "LobbiesListbox";
-            LobbiesListbox.Size = new Size(222, 319);
+            LobbiesListbox.Size = new Size(222, 334);
             LobbiesListbox.TabIndex = 4;
             LobbiesListbox.SelectedIndexChanged += LobbiesListbox_SelectedIndexChanged;
             LobbiesListbox.DoubleClick += LobbiesListbox_DoubleClick;
@@ -187,7 +190,7 @@
             // TakerMoreLobbies
             // 
             TakerMoreLobbies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            TakerMoreLobbies.Location = new Point(566, 366);
+            TakerMoreLobbies.Location = new Point(566, 389);
             TakerMoreLobbies.Name = "TakerMoreLobbies";
             TakerMoreLobbies.Size = new Size(222, 23);
             TakerMoreLobbies.TabIndex = 13;
@@ -221,7 +224,7 @@
             // 
             DisplayGameStats.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DisplayGameStats.Enabled = false;
-            DisplayGameStats.Location = new Point(566, 395);
+            DisplayGameStats.Location = new Point(566, 418);
             DisplayGameStats.Name = "DisplayGameStats";
             DisplayGameStats.Size = new Size(222, 23);
             DisplayGameStats.TabIndex = 16;
@@ -232,9 +235,9 @@
             // TakeControlButton
             // 
             TakeControlButton.Enabled = false;
-            TakeControlButton.Location = new Point(307, 190);
+            TakeControlButton.Location = new Point(9, 275);
             TakeControlButton.Name = "TakeControlButton";
-            TakeControlButton.Size = new Size(75, 75);
+            TakeControlButton.Size = new Size(50, 50);
             TakeControlButton.TabIndex = 17;
             TakeControlButton.Text = "Take Control";
             TakeControlButton.UseVisualStyleBackColor = true;
@@ -243,7 +246,7 @@
             // ButtonMoveUp
             // 
             ButtonMoveUp.Enabled = false;
-            ButtonMoveUp.Location = new Point(307, 161);
+            ButtonMoveUp.Location = new Point(52, 331);
             ButtonMoveUp.Name = "ButtonMoveUp";
             ButtonMoveUp.Size = new Size(75, 23);
             ButtonMoveUp.TabIndex = 18;
@@ -255,7 +258,7 @@
             // ButtonMoveDown
             // 
             ButtonMoveDown.Enabled = false;
-            ButtonMoveDown.Location = new Point(307, 271);
+            ButtonMoveDown.Location = new Point(52, 389);
             ButtonMoveDown.Name = "ButtonMoveDown";
             ButtonMoveDown.Size = new Size(75, 23);
             ButtonMoveDown.TabIndex = 19;
@@ -267,7 +270,7 @@
             // ButtonMoveRight
             // 
             ButtonMoveRight.Enabled = false;
-            ButtonMoveRight.Location = new Point(388, 216);
+            ButtonMoveRight.Location = new Point(89, 360);
             ButtonMoveRight.Name = "ButtonMoveRight";
             ButtonMoveRight.Size = new Size(75, 23);
             ButtonMoveRight.TabIndex = 20;
@@ -279,7 +282,7 @@
             // ButtonMoveLeft
             // 
             ButtonMoveLeft.Enabled = false;
-            ButtonMoveLeft.Location = new Point(226, 216);
+            ButtonMoveLeft.Location = new Point(12, 360);
             ButtonMoveLeft.Name = "ButtonMoveLeft";
             ButtonMoveLeft.Size = new Size(75, 23);
             ButtonMoveLeft.TabIndex = 21;
@@ -307,9 +310,9 @@
             // 
             // ButtonPlayerPickUp
             // 
-            ButtonPlayerPickUp.Location = new Point(343, 337);
+            ButtonPlayerPickUp.Location = new Point(10, 418);
             ButtonPlayerPickUp.Name = "ButtonPlayerPickUp";
-            ButtonPlayerPickUp.Size = new Size(120, 23);
+            ButtonPlayerPickUp.Size = new Size(75, 23);
             ButtonPlayerPickUp.TabIndex = 24;
             ButtonPlayerPickUp.Text = "Pick Up";
             ButtonPlayerPickUp.UseVisualStyleBackColor = true;
@@ -318,20 +321,50 @@
             // 
             // ButtonPlayerLook
             // 
-            ButtonPlayerLook.Location = new Point(226, 337);
+            ButtonPlayerLook.Location = new Point(89, 418);
             ButtonPlayerLook.Name = "ButtonPlayerLook";
-            ButtonPlayerLook.Size = new Size(120, 23);
+            ButtonPlayerLook.Size = new Size(75, 23);
             ButtonPlayerLook.TabIndex = 25;
             ButtonPlayerLook.Text = "Look";
             ButtonPlayerLook.UseVisualStyleBackColor = true;
             ButtonPlayerLook.Visible = false;
             ButtonPlayerLook.Click += ButtonPlayerLook_Click;
             // 
+            // MapPanel
+            // 
+            MapPanel.Controls.Add(LookGridTableLayoutPanel);
+            MapPanel.Location = new Point(172, 56);
+            MapPanel.Name = "MapPanel";
+            MapPanel.Size = new Size(385, 385);
+            MapPanel.TabIndex = 26;
+            // 
+            // LookGridTableLayoutPanel
+            // 
+            LookGridTableLayoutPanel.ColumnCount = 5;
+            LookGridTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.Dock = DockStyle.Fill;
+            LookGridTableLayoutPanel.Location = new Point(0, 0);
+            LookGridTableLayoutPanel.Name = "LookGridTableLayoutPanel";
+            LookGridTableLayoutPanel.RowCount = 5;
+            LookGridTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            LookGridTableLayoutPanel.Size = new Size(385, 385);
+            LookGridTableLayoutPanel.TabIndex = 0;
+            LookGridTableLayoutPanel.Visible = false;
+            // 
             // BotVentureForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(MapPanel);
             Controls.Add(ButtonPlayerLook);
             Controls.Add(ButtonPlayerPickUp);
             Controls.Add(GameResponseDisplayLabel);
@@ -363,6 +396,7 @@
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
             KeyDown += Form1_KeyDown;
+            MapPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -394,5 +428,7 @@
         private Label GameResponseDisplayLabel;
         private Button ButtonPlayerPickUp;
         private Button ButtonPlayerLook;
+        private Panel MapPanel;
+        private TableLayoutPanel LookGridTableLayoutPanel;
     }
 }

@@ -451,6 +451,7 @@ namespace BotVenture
                 ButtonPlayerLook.Visible = true;
                 ButtonMoveLeft.Visible = true;
                 ButtonMoveLeft.Enabled = true;
+                LookGridTableLayoutPanel.Visible = true;
                 GameResponseDisplayLabel.Visible = true;
             }
             else
@@ -460,6 +461,7 @@ namespace BotVenture
                 ButtonMoveRight.Visible = false;
                 ButtonMoveRight.Enabled = false;
                 ButtonMoveDown.Visible = false;
+                LookGridTableLayoutPanel.Visible = false;
                 ButtonPlayerLook.Visible = false;
                 ButtonPlayerPickUp.Visible = false;
                 ButtonMoveDown.Enabled = false;
@@ -533,7 +535,88 @@ namespace BotVenture
             DisplayMoveResponse();
         }
 
-        private void ButtonPlayerLook_Click(object sender, EventArgs e)
+        private async void ButtonPlayerLook_Click(object sender, EventArgs e)
+        {
+            var io = new IO(this);
+            var grid = await io.PlayerLook();
+
+            if (grid != null)
+            {
+                PopulateLookGrid(grid);
+            }
+            else
+            {
+                MessageBox.Show("Failed to load the grid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+        private void PopulateLookGrid(List<TileType?>[,] grid)
+        {
+            // Clear any existing controls in the TableLayoutPanel
+            LookGridTableLayoutPanel.Controls.Clear();
+
+            // Set the row and column counts
+            LookGridTableLayoutPanel.RowCount = grid.GetLength(0);
+            LookGridTableLayoutPanel.ColumnCount = grid.GetLength(1);
+
+            // Loop through the grid to populate the TableLayoutPanel
+            for (int row = 0; row < grid.GetLength(0); row++)
+            {
+                for (int col = 0; col < grid.GetLength(1); col++)
+                {
+                    // Get the list of TileTypes for this cell
+                    var tileTypes = grid[row, col];
+
+                    // Create a new Label for each cell
+                    Label cellLabel = new Label
+                    {
+                        Text = tileTypes != null ? string.Join(", ", tileTypes.Select(t => t.ToString())) : "Empty",
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        Dock = DockStyle.Fill,
+                        BorderStyle = BorderStyle.FixedSingle,
+                        BackColor = GetCellColor(tileTypes) // Set a background color based on TileTypes
+                    };
+
+                    // Add the Label to the TableLayoutPanel
+                    LookGridTableLayoutPanel.Controls.Add(cellLabel, col, row);
+                }
+            }
+        }
+
+        private Color GetCellColor(List<TileType?> tileTypes)
+        {
+            if (tileTypes == null || tileTypes.Count == 0 || !tileTypes.Any(t => t.HasValue))
+                return Color.LightGray;
+
+            // Prioritize colors based on TileTypes present
+            if (tileTypes.Contains(TileType.Player))
+                return Color.Red;
+
+            if (tileTypes.Contains(TileType.Enemy))
+                return Color.Violet;
+
+            if (tileTypes.Contains(TileType.Goal))
+                return Color.Gold;
+
+            if (tileTypes.Contains(TileType.Mate))
+                return Color.Green;
+
+            if (tileTypes.Contains(TileType.CanWalk))
+                return Color.White;
+
+            if (tileTypes.Contains(TileType.Block))
+                return Color.Black;
+
+            // Default color
+            return Color.Gray;
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
         }

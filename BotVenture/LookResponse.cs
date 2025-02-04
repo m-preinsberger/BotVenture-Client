@@ -12,10 +12,6 @@ namespace BotVenture
         public int Score { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public List<List<Info>> Infos { get; set; }
-        public class Info
-        {
-            public int Type { get; set; }
-        }
+        public List<List<Tile?>> Infos { get; set; } // Use a list of lists to match the JSON structure.
     }
 }

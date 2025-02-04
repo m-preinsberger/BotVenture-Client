@@ -264,7 +264,7 @@ namespace BotVenture
                         {
                             PropertyNameCaseInsensitive = true
                         });
-                        if(_form.DEBUG) MessageBox.Show($"Successfully moved player in direction: {Direction}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (_form.DEBUG) MessageBox.Show($"Successfully moved player in direction: {Direction}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return moveResponse;
                     }
                     catch (JsonException jsonEx)
@@ -319,6 +319,93 @@ namespace BotVenture
             }
         }
 
-        //public async Task<>
+        public async Task<List<TileType?>[,]> PlayerLookAsync(string ApiKey)
+        {
+            string requestUrl = $"/api/player/{ApiKey}/look";
+
+            try
+            {
+                HttpResponseMessage response = await Client.GetAsync(requestUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    // Deserialize using the updated LookResponse model.
+                    LookResponse lookResponse = JsonSerializer.Deserialize<LookResponse>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (lookResponse == null || lookResponse.Infos == null)
+                    {
+                        MessageBox.Show("Received an empty or invalid Look-response.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return null;
+                    }
+
+                    // Initialize the grid with the dimensions from the response
+                    int height = lookResponse.Infos.Count;
+                    int width = lookResponse.Infos[0].Count; // Assuming all rows are of equal length
+
+                    List<TileType?>[,] grid = new List<TileType?>[height, width];
+
+                    // Loop through the Infos to populate the grid
+                    for (int row = 0; row < height; row++)
+                    {
+                        for (int col = 0; col < width; col++)
+                        {
+                            var tile = lookResponse.Infos[row][col];
+
+                            if (tile != null)
+                            {
+                                int tileValue = (int)tile.Type; // Get the integer value of the tile's Type
+                                var tileTypes = GetEnums(tileValue); // Use GetEnums to convert to list of TileType?
+                                grid[row, col] = tileTypes;
+                            
+                            }
+                            else
+                            {
+                                grid[row, col] = new List<TileType?> { null };
+                            }
+                        }
+                    }
+
+                    return grid; // Return the grid with List<TileType?> in each cell
+                }
+                else
+                {
+                    MessageBox.Show($"Failed to retrieve player look. Status code: {response.StatusCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while retrieving the look: {ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+        private List<TileType?> GetEnums(int item)
+        {
+            // Get all enum values
+            TileType[] flags = (TileType[])Enum.GetValues(typeof(TileType));
+            var list = new List<TileType?>(); // Result list
+
+            // Iterate in reverse order for proper flag subtraction
+            for (int i = flags.Length - 1; i >= 0; i--)
+            {
+                int flagValue = (int)flags[i]; // Get the integer value of the flag
+                if ((item & flagValue) == flagValue) // Check if the flag is set, if number is bigger 
+                {
+                    list.Add(flags[i]);
+                    item -= flagValue; // Remove the flag from the item
+                }
+            }
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list.Count > 1 && list.Contains(TileType.Block)) // More than one element => remove block if other flags are set
+                    list.Remove(TileType.Block);
+            }
+            return list;
+        }
+
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BotVenture
 {
-    public class Configuration
-    {   
-        public string API_KEY { get; set; }
+    public class Tile
+    {
+        public TileType Type { get; set; }
     }
 }

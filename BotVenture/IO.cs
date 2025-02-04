@@ -109,5 +109,10 @@ namespace BotVenture
                     break;
             }
         }
+        public async Task<List<TileType?>[,]> PlayerLook()
+        {
+            CheckAPIKey(_form.API_KEY);
+            return await Communication.PlayerLookAsync(_form.API_KEY);
+        }
     }
 }
