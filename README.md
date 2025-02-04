@@ -152,7 +152,7 @@ Lessons learned: Code looks more and more like hieroglyphs and coding feels more
 
 I had an error which I couldn't figure out for a long time. The JSOn-Deserialzer tried to convert from the string into a DateTime Format. Why did occcured the error here? After half an hour I found out that DateTime is a not nullable data type. So it throw an aggressive error at me every time I tried to read this value.
 
-![This was the error.](image1.png)
+![This was the error.](image_1.png)
 
 This was the error.
 
