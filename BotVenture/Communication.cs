@@ -17,11 +17,6 @@ namespace BotVenture
 {
     internal class Communication
     {
-        public Communication()
-        {
-
-        }
-
         private HttpClient Client { get; } = new HttpClient { BaseAddress = new Uri("https://botventure.htl-neufelden.at") };
         public async Task CloseHostedGame(string ApiKey)
         {

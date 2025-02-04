@@ -12,107 +12,98 @@ namespace BotVenture
     internal class IO
     {
         private Communication Communication;
-        private BotVentureForm _form;
+        private Game _game;
 
-        public IO(BotVentureForm form)
+        public IO(Game game)
         {
-            _form = form ?? throw new ArgumentNullException(nameof(form));
+            _game = game ?? throw new ArgumentNullException(nameof(game));
             Communication = new Communication();
-        
         }
-        private bool CheckAPIKey(string apiKey)
+
+        private bool CheckAPIKey()
         {
-            if (apiKey == null)
+            if (string.IsNullOrEmpty(_game.API_KEY))
             {
-                throw new ArgumentNullException(nameof(apiKey));
+                throw new ArgumentNullException("API_KEY cannot be null or empty.");
             }
             return true;
         }
 
         private bool CheckGameID(string gameID)
         {
-            if (gameID == null)
+            if (string.IsNullOrEmpty(gameID))
             {
-                throw new ArgumentNullException(nameof(gameID));
+                throw new ArgumentNullException(nameof(gameID), "GameID cannot be null or empty.");
             }
             return true;
         }
 
         public async Task JoinGame(string gameId)
         {
-            CheckAPIKey(_form.API_KEY);
-            CheckGameID(gameId);           // Call the join method from the Communication class
-            await Communication.JoinGame(_form.API_KEY, gameId);
+            CheckAPIKey();
+            CheckGameID(gameId);
+            await Communication.JoinGame(_game.API_KEY, gameId);
         }
+
         public async Task<string> CreateGame(Level level)
         {
-            CheckAPIKey(_form.API_KEY);
-            string level_str = level.ToString();
-            CheckGameID(level_str);
-            // Call the join method from the Communication class
-            return await Communication.CreateGame(_form.API_KEY, level_str);
+            CheckAPIKey();
+            string levelStr = level.ToString();
+            // Assuming CreateGame requires a valid Level string, not a GameID
+            return await Communication.CreateGame(_game.API_KEY, levelStr);
         }
+
         public async Task CloseGame()
         {
-            CheckAPIKey(_form.API_KEY);
-            await Communication.CloseHostedGame(_form.API_KEY);
+            CheckAPIKey();
+            await Communication.CloseHostedGame(_game.API_KEY);
         }
+
         public async Task<(string Now, string StartAt)> StartGame()
         {
-            CheckAPIKey(_form.API_KEY);
-            return await Communication.StartGame(_form.API_KEY);
+            CheckAPIKey();
+            return await Communication.StartGame(_game.API_KEY);
         }
+
         public async Task<Lobby[]> GetCurrentGames(LobbyFilter lobbyFilter, int maxLobbies)
         {
+            CheckAPIKey();
+
             switch (lobbyFilter)
             {
                 case LobbyFilter.open:
                     return await Communication.GetCurrentGames("false", maxLobbies.ToString());
-                    break;
                 case LobbyFilter.running:
                     return await Communication.GetCurrentGames("true", maxLobbies.ToString());
                 case LobbyFilter.all:
                     return await Communication.GetCurrentGames("null", maxLobbies.ToString());
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException($"LobbyFilter '{lobbyFilter}' is not implemented.");
             }
         }
+
         public async Task<GameState> GetCurrentGameState()
         {
-            CheckAPIKey (_form.API_KEY);
-            return await Communication.GetCurrentGameState(_form.API_KEY);
+            CheckAPIKey();
+            return await Communication.GetCurrentGameState(_game.API_KEY);
         }
+
         public async Task<PicKUpResponse> PlayerPickUp()
         {
-            CheckAPIKey (_form.API_KEY);
-            return await Communication.PlayerPickUp(_form.API_KEY);
+            CheckAPIKey();
+            return await Communication.PlayerPickUp(_game.API_KEY);
         }
+
         public async Task<MoveResponse> PlayerMove(Direction direction)
         {
-            CheckAPIKey (_form.API_KEY);
-            switch (direction)
-            {
-                case Direction.Up:
-                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
-                    break;
-                case Direction.Right:
-                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
-                    break;
-                case Direction.Down:
-                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
-                    break;
-                case Direction.Left:
-                    return await Communication.PlayerMoveDirection(_form.API_KEY, (int)direction);
-                    break;
-                default:
-                    throw new ArgumentNullException("The Direction Enum has an invalid value.");
-                    break;
-            }
+            CheckAPIKey();
+            return await Communication.PlayerMoveDirection(_game.API_KEY, (int)direction);
         }
+
         public async Task<List<TileType?>[,]> PlayerLook()
         {
-            CheckAPIKey(_form.API_KEY);
-            return await Communication.PlayerLookAsync(_form.API_KEY);
+            CheckAPIKey();
+            return await Communication.PlayerLookAsync(_game.API_KEY);
         }
     }
 }

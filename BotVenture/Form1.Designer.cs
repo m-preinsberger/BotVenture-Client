@@ -89,7 +89,6 @@
             JoinButton.TabIndex = 2;
             JoinButton.Text = "Join";
             JoinButton.UseVisualStyleBackColor = true;
-            JoinButton.TextChanged += commitButton_TextChanged;
             JoinButton.Click += commitButton_Click;
             // 
             // GameIdTextBox
@@ -395,7 +394,6 @@
             Text = "BotVenture";
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
-            KeyDown += Form1_KeyDown;
             MapPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
