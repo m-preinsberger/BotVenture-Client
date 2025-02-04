@@ -17,7 +17,7 @@ namespace BotVenture
         public IO(BotVentureForm form)
         {
             _form = form ?? throw new ArgumentNullException(nameof(form));
-            Communication = new Communication(_form);
+            Communication = new Communication();
         
         }
         private bool CheckAPIKey(string apiKey)
@@ -44,13 +44,13 @@ namespace BotVenture
             CheckGameID(gameId);           // Call the join method from the Communication class
             await Communication.JoinGame(_form.API_KEY, gameId);
         }
-        public async Task CreateGame(Level level)
+        public async Task<string> CreateGame(Level level)
         {
             CheckAPIKey(_form.API_KEY);
             string level_str = level.ToString();
             CheckGameID(level_str);
             // Call the join method from the Communication class
-            await Communication.CreateGame(_form.API_KEY, level_str);
+            return await Communication.CreateGame(_form.API_KEY, level_str);
         }
         public async Task CloseGame()
         {

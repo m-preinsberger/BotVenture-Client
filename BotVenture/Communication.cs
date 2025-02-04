@@ -17,11 +17,9 @@ namespace BotVenture
 {
     internal class Communication
     {
-        private readonly BotVentureForm _form;
-
-        public Communication(BotVentureForm form)
+        public Communication()
         {
-            _form = form;
+
         }
 
         private HttpClient Client { get; } = new HttpClient { BaseAddress = new Uri("https://botventure.htl-neufelden.at") };
@@ -74,9 +72,7 @@ namespace BotVenture
                 MessageBox.Show($"An error occurred: {ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-        public async Task CreateGame(string ApiKey, string level)
+        public async Task<string> CreateGame(string ApiKey, string level)
         {
             // Create the URL by appending the API key and game ID to the base URL
             string requestUrl = $"/api/game/{ApiKey}/create/{level}";
@@ -85,13 +81,6 @@ namespace BotVenture
             try
             {
                 HttpResponseMessage response = await Client.PostAsync(requestUrl, content);
-                if (_form.DEBUG)
-                {
-                    string tempResponseBody = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Raw Response: {tempResponseBody}");
-                    var contentType = response.Content.Headers.ContentType?.MediaType;
-                    MessageBox.Show($"Content-Type: {contentType}");
-                }
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -101,10 +90,7 @@ namespace BotVenture
                         JsonElement root = doc.RootElement;
                         string id = root.GetProperty("id").GetString();
                         MessageBox.Show($"Game created successfully. Game ID: {id}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        _form.SetGameID(id);
-                        _form.GameIDSet = true;
-                        _form.GameCreated = true;
-                        // i should remove all of this, communication class should not have to know the form                                                    
+                        return id;              // i should remove all of this, communication class should not have to know the form                                                    
                     }
                 }
                 else
@@ -117,11 +103,13 @@ namespace BotVenture
                         string message = root.GetProperty("message").GetString();
                         MessageBox.Show($"Failed to create the game. Error: {error}, Message: {message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    return null;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
             }
         }
 
@@ -181,18 +169,14 @@ namespace BotVenture
                 }
                 else
                 {
-                    string errorMessage = _form.DEBUG ? $"Failed to get current game state. \nRequest URL: {requestUrl}\nStatus Code: {response.StatusCode}\nReason: {response.ReasonPhrase}"
-                        : $"Failed to get current game state.\n{response.StatusCode}";
+                    string errorMessage = $"Failed to get current game state. \nRequest URL: {requestUrl}\nStatus Code: {response.StatusCode}\nReason: {response.ReasonPhrase}";
                     MessageBox.Show(errorMessage, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                string exceptionMessage = _form.DEBUG
-                ? $"An error occurred:\nMessage: {ex.Message}\nStack Trace: {ex.StackTrace}\nRequest URL: {requestUrl}"
-                : $"An error occurred: {ex.Message}";
-
+                string exceptionMessage = $"An error occurred: {ex.Message}";
                 MessageBox.Show(exceptionMessage, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
@@ -227,20 +211,14 @@ namespace BotVenture
                 }
                 else
                 {
-                    string errorMessage = _form.DEBUG
-                        ? $"Failed to get current games.\nRequest URL: {requestUrl}\nStatus Code: {response.StatusCode}\nReason: {response.ReasonPhrase}"
-                        : $"Failed to get current games. Status code: {response.StatusCode}";
-
+                    string errorMessage = $"Failed to get current games.\nRequest URL: {requestUrl}\nStatus Code: {response.StatusCode}\nReason: {response.ReasonPhrase}";
                     MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return Array.Empty<Lobby>();
                 }
             }
             catch (Exception ex)
             {
-                string exceptionMessage = _form.DEBUG
-                    ? $"An error occurred:\nMessage: {ex.Message}\nStack Trace: {ex.StackTrace}\nRequest URL: {requestUrl}"
-                    : $"An error occurred: {ex.Message}";
-
+                string exceptionMessage = $"An error occurred: {ex.Message}";
                 MessageBox.Show(exceptionMessage, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return Array.Empty<Lobby>();
             }
@@ -264,7 +242,7 @@ namespace BotVenture
                         {
                             PropertyNameCaseInsensitive = true
                         });
-                        if (_form.DEBUG) MessageBox.Show($"Successfully moved player in direction: {Direction}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        //MessageBox.Show($"Successfully moved player in direction: {Direction}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return moveResponse;
                     }
                     catch (JsonException jsonEx)

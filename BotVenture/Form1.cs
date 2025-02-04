@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Windows.Forms;
 namespace BotVenture
 {
     public partial class BotVentureForm : Form
@@ -115,8 +116,9 @@ namespace BotVenture
                 else
                 {
                     // If the game is not created, create it
-                    await io.CreateGame(ChoosenLevel);
-
+                    GameId = await io.CreateGame(ChoosenLevel);
+                    GameIDSet = true;
+                    GameCreated = true;
                     if (GameCreated)
                     {
                         LevelComboBox.Enabled = false;
