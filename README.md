@@ -31,9 +31,6 @@ Functions in the RestAPI get called by HTTP … URL + Verb
 </aside>
 
 <aside>
-💡
-
-**`2iOTBDstEkqUygbh33w39w`**
 
 </aside>
 
