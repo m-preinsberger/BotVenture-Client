@@ -118,7 +118,7 @@ namespace BotVenture
         {
             if (game.GameCreated)
             {
-                var io = new IO(game); // Updated from 'new IO(this)' to 'new IO(game)'
+                var io = new IO(game);
                 var result = await io.StartGame();
 
                 if (result.Now != null && result.StartAt != null)
@@ -126,9 +126,21 @@ namespace BotVenture
                     game.StartTime = DateTime.Parse(result.Now);
                     game.StartAt = DateTime.Parse(result.StartAt);
 
-                    MessageBox.Show($"Game started successfully.\nNow: {game.StartTime}\nStart At: {game.StartAt}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        $"Game started successfully.\nNow: {game.StartTime}\nStart At: {game.StartAt}",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
                     await RefreshLobbyList();
                     game.GameStarted = true;
+
+                    // Wait 5.5 seconds before starting the bot.
+                    await Task.Delay(TimeSpan.FromSeconds(5.5));
+
+                    // Start the bot asynchronously.
+                    Brain bot = new Brain(new IO(game));
+                    _ = Task.Run(async () => await bot.Run());
                 }
                 else
                 {
@@ -136,6 +148,7 @@ namespace BotVenture
                 }
             }
         }
+
 
         private async void Form1_Load(object sender, EventArgs e)
         {

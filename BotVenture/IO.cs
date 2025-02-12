@@ -9,7 +9,7 @@ using BotVenture;
 
 namespace BotVenture
 {
-    internal class IO
+    public class IO
     {
         private Communication Communication;
         private Game _game;
