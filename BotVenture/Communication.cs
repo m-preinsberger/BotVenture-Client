@@ -17,7 +17,7 @@ namespace BotVenture
 {
     internal class Communication
     {
-        private HttpClient Client { get; } = new HttpClient { BaseAddress = new Uri("https://botventure.htl-neufelden.at") };
+        private HttpClient Client { get; } = new HttpClient { BaseAddress = new Uri("https://game-dd.countit.at") };
         public async Task CloseHostedGame(string ApiKey)
         {
             // Create the URL by appending the API key to the base URL
